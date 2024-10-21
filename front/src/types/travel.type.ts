@@ -1,8 +1,8 @@
-export type travelType = {
-  id: Number;
-  name: String;
-  city: String;
-  country: String;
-  image: String;
-  description: String;
+export type TravelType = {
+  id: number;
+  name: string;
+  city: string;
+  country: string;
+  image: string;
+  description: string;
 };

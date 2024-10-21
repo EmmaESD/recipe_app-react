@@ -1,25 +1,20 @@
-import { useEffect, useState } from "react";
-import { travelType } from "./types/travel.type";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import TravelListPage from "./pages/TravelListPage";
+import TravelSinglePage from "./pages/TravelSinglePage";
 
 function App() {
-  const [travelList, setTravelList] = useState<travelType[]>([]);
-
-  useEffect(() => {
-    fetchTravels();
-  }, []);
-
-  const fetchTravels = async () => {
-    const response = await fetch("http://localhost:5173/travels.json");
-    const data = await response.json();
-    setTravelList(data);
-  };
-
   return (
-    <>
-      <h1 className="text-violet-500">Hello world</h1>
-
-      {/* List of travel */}
-    </>
+    <BrowserRouter>
+      <nav className="flex justify-between items-center p-4 bg-red-400 text-white">
+        <Link to="/">Home</Link>
+      </nav>
+      <div className="container mx-auto mt-10">
+        <Routes>
+          <Route path="/" element={<TravelListPage />} />
+          <Route path="/:id" element={<TravelSinglePage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
