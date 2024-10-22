@@ -1,6 +1,9 @@
+import { error } from "console";
 import express, { Request, Response } from "express";
 const app = express();
 const port = 8000;
+
+app.use(express.json());
 
 const travelList = [
   {
@@ -36,22 +39,57 @@ app.get("/travels", (req: Request, res: Response) => {
 
 // get one travel
 app.get("/travels/:id", (req: Request, res: Response) => {
-  res.send(travelList);
+  // get param id
+  const id = req.params.id;
+  //find travel into array with param id
+  const travel = travelList.find((t) => t.id === Number(id));
+  //send travel
+
+  if (!travel) {
+    res.status(404).send({
+      message: "Travel not found",
+    });
+  }
+  res.send(travel);
 });
 
 // create travel
 app.post("/travels", (req: Request, res: Response) => {
+  //get data body
+  const body = req.body;
+  //create id
+  const newId = travelList.length + 1;
+  //add id into new travel
+  body.id = newId;
+  //Add data body into array
+  travelList.push(body);
+
   res.send(travelList);
 });
 
 // update travel
 app.put("/travels/:id", (req: Request, res: Response) => {
-  res.send("update");
+  const id = req.params.id;
+  const updateTravelData = req.body;
+  console.log(updateTravelData);
+
+  const index = travelList.findIndex((t) => t.id === Number(id));
+  travelList[index] = {
+    ...travelList[index],
+    ...updateTravelData,
+  };
+
+  res.send(travelList[index]);
 });
 
 //delete travel
 app.delete("/travels/:id", (req: Request, res: Response) => {
-  res.send("delete");
+  const id = req.params.id;
+  const index = travelList.findIndex((t) => t.id === Number(id));
+  if (index !== -1) {
+    travelList.splice(index, 1);
+  }
+  res.status(204);
 });
 
 app.listen(port, () => {
