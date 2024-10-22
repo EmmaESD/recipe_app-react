@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { TravelType } from "../types/travel.type";
 
 const TravelSinglePage = () => {
   const { id } = useParams();
   const [travel, setTravel] = useState<TravelType>({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTravels();
@@ -16,16 +17,14 @@ const TravelSinglePage = () => {
     setTravel(data);
   };
 
-  const deleteTravel = async () => {
-    const response = await fetch(`http://localhost:8000/travels/${id}`, {
-      method: "DELETE",
-    });
-    if (response.ok) {
-      const data = await response.json();
-      setTravel(data);
-      window.location.reload(); // Rafraîchit la page après la suppression
-    } else {
-      console.error("Erreur lors de la suppression");
+  const handleDelete = async () => {
+    try {
+      await fetch(`http://localhost:8000/travels/${id}`, {
+        method: "DELETE",
+      });
+      navigate("/");
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -33,7 +32,12 @@ const TravelSinglePage = () => {
     <div>
       <img src={travel?.image} alt="" />
       <h1>{travel?.name}</h1>
-      <button onClick={deleteTravel}>Delete</button>
+      <button
+        onClick={handleDelete}
+        className="bg-red-400 text-white text-xl px-4 py-4 hover:bg-red-600 transition-all"
+      >
+        Delete
+      </button>
     </div>
   );
 };

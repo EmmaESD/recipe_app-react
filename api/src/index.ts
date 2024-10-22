@@ -91,12 +91,15 @@ app.put("/travels/:id", (req: Request, res: Response) => {
 
 //delete travel
 app.delete("/travels/:id", (req: Request, res: Response) => {
-  const id = req.params.id;
   const index = travelList.findIndex((t) => t.id === Number(id));
-  if (index !== -1) {
-    travelList.splice(index, 1);
+  const id = req.params.id;
+  if (index === -1) {
+    res.status(404).send({ message: "error" });
   }
-  res.status(204);
+
+  travelList.splice(index, 1);
+
+  res.status(204).send({ message: "success to delete" });
 });
 
 app.listen(port, () => {
