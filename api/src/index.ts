@@ -1,9 +1,16 @@
 import { error } from "console";
 import express, { Request, Response } from "express";
+import cors from "cors";
+
 const app = express();
 const port = 8000;
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 const travelList = [
   {
