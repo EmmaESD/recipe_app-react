@@ -2,18 +2,16 @@ import { useEffect, useState } from "react";
 import CardTravel from "./CardTravel";
 import { TravelType } from "../types/travel.type";
 
-const TravelList = () => {
-  const [travelList, setTravelList] = useState<TravelType[]>([]);
+type TravelListProps = {
+  fetchTravels: () => void;
+  travelList: TravelType[];
+};
 
+const TravelList = ({ fetchTravels, travelList }: TravelListProps) => {
   useEffect(() => {
     fetchTravels();
   }, []);
 
-  const fetchTravels = async () => {
-    const response = await fetch("http://localhost:8000/travels");
-    const data = await response.json();
-    setTravelList(data);
-  };
   return (
     <div className="grid grid-col-3 gap-4 ">
       {travelList.map((travel) => (

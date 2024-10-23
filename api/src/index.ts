@@ -91,8 +91,9 @@ app.put("/travels/:id", (req: Request, res: Response) => {
 
 //delete travel
 app.delete("/travels/:id", (req: Request, res: Response) => {
-  const index = travelList.findIndex((t) => t.id === Number(id));
   const id = req.params.id;
+  const index = travelList.findIndex((t) => t.id === Number(id));
+
   if (index === -1) {
     res.status(404).send({ message: "error" });
   }
