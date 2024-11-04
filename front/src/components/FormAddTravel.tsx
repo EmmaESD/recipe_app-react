@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TravelType } from "../types/travel.type";
 import TravelList from "./TravelList";
+import { create } from "../services/travel.service";
 
 type formAddTravelProps = {
   fetchTravels: () => void;
@@ -28,13 +29,7 @@ const FormAddTravel = ({ fetchTravels }: formAddTravelProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await fetch(`http://localhost:8000/travels`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(addTravel),
-      });
+      await create(addTravel);
       console.log("travel created");
       fetchTravels();
     } catch (error) {

@@ -2,14 +2,18 @@ import { useState } from "react";
 import FormAddTravel from "../components/FormAddTravel";
 import { TravelType } from "../types/travel.type";
 import TravelList from "../components/TravelList";
+import { findAll } from "../services/travel.service";
 
 const TravelListPage = () => {
   const [travelList, setTravelList] = useState<TravelType[]>([]);
 
   const fetchTravels = async () => {
-    const response = await fetch("http://localhost:8000/travels");
-    const data = await response.json();
-    setTravelList(data);
+    try {
+      const travels = await findAll();
+      setTravelList(travels);
+    } catch (error) {
+      console.log("error to fetch travel", error);
+    }
   };
   return (
     <div className="container mx-auto">
