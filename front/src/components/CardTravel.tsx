@@ -8,17 +8,18 @@ type CardTravelProps = {
 const CardTravel = ({ travel }: CardTravelProps) => {
   return (
     <div className="shadow-md">
-      <Link to={`/${travel.id}`}>
-        <div className="h-[200px] overflow-hidden">
+      <div className="h-[200px] overflow-hidden">
+        <Link to={`/${travel.id}`}>
           <img src={travel.image} alt="" />
-        </div>
-      </Link>
+        </Link>
+      </div>
       <div className="p-6">
         <Link to={`/${travel.id}`}>
           <h2 className="text-xl text-zinc-500 font-bold mt-2">
             {travel.name}
           </h2>
         </Link>
+
         <p>
           {travel?.description?.substring(0, 50)}
           {travel?.description?.length > 50 && "..."}

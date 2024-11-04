@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CardTravel from "./CardTravel";
 import { TravelType } from "../types/travel.type";
 
 type TravelListProps = {
-  fetchTravels: () => void;
   travelList: TravelType[];
+  fetchTravels: () => void;
 };
 
-const TravelList = ({ fetchTravels, travelList }: TravelListProps) => {
+const TravelList = ({ travelList, fetchTravels }: TravelListProps) => {
   useEffect(() => {
     fetchTravels();
   }, []);
 
   return (
-    <div className="grid grid-col-3 gap-4 ">
+    <div className="grid grid-cols-3 gap-4">
       {travelList.map((travel) => (
         <CardTravel travel={travel} key={travel.id} />
       ))}

@@ -12,7 +12,12 @@ const TravelSinglePage = () => {
   }, []);
 
   const fetchTravels = async () => {
-    const response = await fetch(`http://localhost:8000/travels/${id}`);
+    const response = await fetch(`http://localhost:8000/travels/${id}`, {
+      method: "GET", // GET, POST, PUT, DELETE...
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     const data = await response.json();
     setTravel(data);
   };
@@ -21,10 +26,14 @@ const TravelSinglePage = () => {
     try {
       await fetch(`http://localhost:8000/travels/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      console.log("Success to delete");
       navigate("/");
     } catch (error) {
-      console.log(error);
+      console.log("Success to delete", error);
     }
   };
 
@@ -32,9 +41,10 @@ const TravelSinglePage = () => {
     <div>
       <img src={travel?.image} alt="" />
       <h1>{travel?.name}</h1>
+
       <button
         onClick={handleDelete}
-        className="bg-red-400 text-white text-xl px-4 py-4 hover:bg-red-600 transition-all"
+        className="bg-red-400 text-white text-xl px-4 py-2 hover:bg-red-500 transition-all"
       >
         Delete
       </button>
