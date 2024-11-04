@@ -10,7 +10,7 @@ type formAddTravelProps = {
 const FormAddTravel = ({ fetchTravels }: formAddTravelProps) => {
   const [addTravel, setAddTravel] = useState<TravelType>({
     id: 0,
-    name: "",
+    title: "",
     city: "",
     country: "",
     description: "",
@@ -43,7 +43,7 @@ const FormAddTravel = ({ fetchTravels }: formAddTravelProps) => {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Entre un titre"
           name="name"
           onChange={handleChange}
         />

@@ -15,13 +15,15 @@ const TravelSinglePage = () => {
   const fetchTravel = async () => {
     try {
       const travel = await findOneById(id as string);
+      setTravel(travel);
     } catch (error) {
-      console.log("error to fetch travel", error);
+      console.log("Error to fetch travels", error);
     }
   };
 
   const handleDelete = async () => {
     if (!id) return;
+
     try {
       await remove(id);
       navigate("/");
@@ -33,7 +35,7 @@ const TravelSinglePage = () => {
   return (
     <div>
       <img src={travel?.image} alt="" />
-      <h1>{travel?.name}</h1>
+      <h1>{travel?.title}</h1>
 
       <button
         onClick={handleDelete}
