@@ -50,7 +50,7 @@ app.get("/travels/:id", (req: Request, res: Response) => {
   console.log("end point get one (id): ", id);
 
   const sql = "SELECT * FROM travel WHERE id = ?";
-  const values = [Number(id)];
+  const values = [id];
   connection.query(sql, values, (error, results) => {
     if (error) {
       res.status(500).send({ error: "Error while fetching data" });
@@ -71,17 +71,77 @@ app.get("/travels/:id", (req: Request, res: Response) => {
 
 // Create travel (app.post) (/travels)
 app.post("/travels", (req: Request, res: Response) => {
-  res.send("create");
+  console.log("test", req.body);
+  const { title, city, country, image, description } = req.body;
+  const sqlCreate =
+    "INSERT INTO travel (title, city, country, image, description) VALUES (?, ?, ?, ?, ?)";
+  const newTravel = [title, city, country, image, description];
+
+  connection.query(sqlCreate, newTravel, (error, results) => {
+    if (error) {
+      console.log("erreur:", error);
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+  });
+  res.status(200).send({ message: "Success to create" });
 });
 
 // Update travel (app.put) (/travels/:id)
 app.put("/travels/:id", (req: Request, res: Response) => {
-  res.send("update");
+  const { id } = req.params;
+  const { title, city, country, image, description } = req.body;
+  const sqlSelect = "SELECT * FROM travel WHERE id = ?";
+  const sql =
+    "UPDATE FROM travel (title, city, country, image, description) SET (?, ?, ?, ?, ?) WHERE id = ?";
+  const newTravel = [title, city, country, image, description];
+  const values = [id];
+  connection.query(sqlSelect, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+    if (Array.isArray(results) && results.length === 0) {
+      res.status(404).send({ error: "Travel not found" });
+      return;
+    }
+  });
+
+  connection.query(sql, newTravel, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+  });
+  res.send("update success");
 });
 
 // Delete travel (app.delete) (/travels/:id)
 app.delete("/travels/:id", (req: Request, res: Response) => {
-  res.status(204).send({ message: "Success to delete" });
+  const { id } = req.params;
+  const sql = "DELETE FROM travel WHERE id = ?";
+  const sqlSelect = "SELECT * FROM travel WHERE id = ?";
+  const values = [id];
+
+  connection.query(sqlSelect, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+    if (Array.isArray(results) && results.length === 0) {
+      res.status(404).send({ error: "Travel not found" });
+      return;
+    }
+  });
+
+  connection.query(sql, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+  });
+
+  res.status(200).send({ message: "Success to delete" });
 });
 
 app.listen(port, () => {
