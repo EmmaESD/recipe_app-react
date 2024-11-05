@@ -180,6 +180,26 @@ app.delete("/travels/:id", (req: Request, res: Response) => {
   });
 });
 
+//CATEGORIES
+
+app.get("/categories", (req, res) => {
+  res.send("get all categories");
+});
+
+app.get("/categories/:id", (req, res) => {
+  res.send("get one categorie");
+});
+
+app.post("/categories", (req, res) => {
+  res.send("category created");
+});
+
+app.delete("categories/:id", (req, res) => {
+  res.send("category deleted");
+});
+
+//LISTEN
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

@@ -34,3 +34,15 @@ export const remove = async (id: string) => {
     },
   });
 };
+
+export const update = async (id: string, travel: TravelDTO) => {
+  const response = await fetch(`${API_URL}/travels/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(travel),
+  });
+  const data = await response.json();
+  return data;
+};
