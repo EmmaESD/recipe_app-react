@@ -9,7 +9,7 @@ export const findAll = async () => {
 };
 
 export const findOneById = async (id: string) => {
-  const response = await fetch(`${API_URL}/travels`);
+  const response = await fetch(`${API_URL}/travels/${id}`);
   const data = await response.json();
   return data;
 };
