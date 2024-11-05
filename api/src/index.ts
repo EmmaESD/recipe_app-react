@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import mysql from "mysql";
+import mysql, { ResultSetHeader } from "mysql2";
 
 const app = express();
 const port = 8000;
@@ -71,58 +71,73 @@ app.get("/travels/:id", (req: Request, res: Response) => {
 
 // Create travel (app.post) (/travels)
 app.post("/travels", (req: Request, res: Response) => {
-  console.log("test", req.body);
   const { title, city, country, image, description } = req.body;
-  const sqlCreate =
+  const sql =
     "INSERT INTO travel (title, city, country, image, description) VALUES (?, ?, ?, ?, ?)";
-  const newTravel = [title, city, country, image, description];
+  const values = [title, city, country, image, description];
 
-  connection.query(sqlCreate, newTravel, (error, results) => {
+  connection.query(sql, values, (error, results) => {
     if (error) {
-      console.log("erreur:", error);
-      res.status(500).send({ error: "Error while fetching data" });
+      res.status(500).send({ error: "Error while creating data" });
       return;
     }
+    if ("insertId" in results) {
+      console.log("results: ", (results as ResultSetHeader).insertId);
+    }
+    res.status(200).send({ message: "Travel created successfully" });
   });
-  res.status(200).send({ message: "Success to create" });
 });
 
 // Update travel (app.put) (/travels/:id)
 app.put("/travels/:id", (req: Request, res: Response) => {
   const { id } = req.params;
-  const { title, city, country, image, description } = req.body;
-  const sqlSelect = "SELECT * FROM travel WHERE id = ?";
-  const sql =
-    "UPDATE FROM travel (title, city, country, image, description) SET (?, ?, ?, ?, ?) WHERE id = ?";
-  const newTravel = [title, city, country, image, description];
-  const values = [id];
-  connection.query(sqlSelect, values, (error, results) => {
-    if (error) {
-      res.status(500).send({ error: "Error while fetching data" });
-      return;
-    }
-    if (Array.isArray(results) && results.length === 0) {
-      res.status(404).send({ error: "Travel not found" });
-      return;
-    }
-  });
 
-  connection.query(sql, newTravel, (error, results) => {
-    if (error) {
-      res.status(500).send({ error: "Error while fetching data" });
-      return;
+  console.log("end point update (id): ", id);
+  console.log("end point update (body): ", req.body);
+
+  connection.query(
+    "SELECT * FROM travel WHERE id = ?",
+    [id],
+    (error, results) => {
+      console.log("results: ", results);
+      console.log("error: ", error);
+      if (error) {
+        console.log("error: ", error);
+        res.status(500).send({ error: "Error while fetching data" });
+        return;
+      }
+      if (Array.isArray(results) && results.length === 0) {
+        res.status(404).send({ error: "Travel not found" });
+        return;
+      }
+
+      if (Array.isArray(results) && results.length === 1) {
+        const currentTravel = results[0];
+        const newTravel = {
+          ...currentTravel,
+          ...req.body,
+        };
+
+        // UPDATE REQUEST with newTravel params
+
+        console.log("newTravel: ", newTravel);
+      }
     }
-  });
-  res.send("update success");
+  );
+
+  // res.status(200).send({ message: "Travel updated successfully" });
 });
 
 // Delete travel (app.delete) (/travels/:id)
 app.delete("/travels/:id", (req: Request, res: Response) => {
   const { id } = req.params;
-  const sql = "DELETE FROM travel WHERE id = ?";
+  console.log("end point delete (id): ", id);
+
+  const sqlDelete = "DELETE FROM travel WHERE id = ?";
   const sqlSelect = "SELECT * FROM travel WHERE id = ?";
   const values = [id];
 
+  // Vérifier si l'id existe dans la base de données
   connection.query(sqlSelect, values, (error, results) => {
     if (error) {
       res.status(500).send({ error: "Error while fetching data" });
@@ -134,14 +149,17 @@ app.delete("/travels/:id", (req: Request, res: Response) => {
     }
   });
 
-  connection.query(sql, values, (error, results) => {
+  // Si l'id existe, on peut supprimer
+  connection.query(sqlDelete, values, (error, results) => {
     if (error) {
       res.status(500).send({ error: "Error while fetching data" });
       return;
     }
-  });
 
-  res.status(200).send({ message: "Success to delete" });
+    console.log("results", results);
+
+    res.status(200).send({ message: "Success to delete" });
+  });
 });
 
 app.listen(port, () => {
