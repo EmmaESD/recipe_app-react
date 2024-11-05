@@ -1,7 +1,7 @@
 import { useState } from "react";
-import FormAddTravel from "../components/FormAddTravel";
-import { TravelType } from "../types/travel.type";
+import FormTravel from "../components/FormTravel";
 import TravelList from "../components/TravelList";
+import { TravelType } from "../types/travel.type";
 import { findAll } from "../services/travel.service";
 
 const TravelListPage = () => {
@@ -12,13 +12,16 @@ const TravelListPage = () => {
       const travels = await findAll();
       setTravelList(travels);
     } catch (error) {
-      console.log("error to fetch travel", error);
+      console.log("Error to fetch travels", error);
     }
   };
+
   return (
-    <div className="container mx-auto">
-      <h1 className="text-4xl text-violet-700 mb-10">Share your travel</h1>
-      <FormAddTravel fetchTravels={fetchTravels} />
+    <div className="">
+      <h1 className="text-4xl text-red-400 mb-10">Share your travel</h1>
+
+      <FormTravel fetchTravels={fetchTravels} />
+
       <TravelList travelList={travelList} fetchTravels={fetchTravels} />
     </div>
   );
