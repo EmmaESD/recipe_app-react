@@ -3,7 +3,7 @@ import { TravelDTO } from "../types/travel.type";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const findAll = async () => {
-  const response = await fetch(`${API_URL}`);
+  const response = await fetch(`${API_URL}/travels`);
   const data = await response.json();
   return data;
 };

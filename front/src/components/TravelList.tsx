@@ -9,6 +9,7 @@ type TravelListProps = {
 
 const TravelList = ({ travelList, fetchTravels }: TravelListProps) => {
   useEffect(() => {
+    console.log("test travel list");
     fetchTravels();
   }, []);
 

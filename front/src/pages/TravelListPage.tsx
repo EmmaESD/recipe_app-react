@@ -10,6 +10,7 @@ const TravelListPage = () => {
   const fetchTravels = async () => {
     try {
       const travels = await findAll();
+      console.log("travels:", travels);
       setTravelList(travels);
     } catch (error) {
       console.log("Error to fetch travels", error);

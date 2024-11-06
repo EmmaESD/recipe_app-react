@@ -34,6 +34,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // Get all travels (app.get) (/travels)
 app.get("/travels", (req: Request, res: Response) => {
+  console.log("test get all");
   connection.query("SELECT * from travel", function (error, results) {
     if (error) {
       res.status(500).send({ error: "Error while fetching data" });
@@ -183,19 +184,137 @@ app.delete("/travels/:id", (req: Request, res: Response) => {
 //CATEGORIES
 
 app.get("/categories", (req, res) => {
-  res.send("get all categories");
+  connection.query("SELECT * from category", function (error, results) {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+    res.status(200).send(results);
+  });
 });
 
 app.get("/categories/:id", (req, res) => {
-  res.send("get one categorie");
+  const { id } = req.params;
+  console.log("end point get one (id): ", id);
+
+  const sql = "SELECT * FROM category WHERE id = ?";
+  const values = [id];
+  connection.query(sql, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+
+    if (Array.isArray(results) && results.length === 0) {
+      res.status(404).send({ error: "Travel not found" });
+      return;
+    }
+
+    if (Array.isArray(results) && results.length === 1) {
+      res.status(200).send(results[0]);
+      return;
+    }
+  });
 });
 
 app.post("/categories", (req, res) => {
-  res.send("category created");
+  const { name, description } = req.body;
+  const sql = "INSERT INTO category (name, description) VALUES (?, ?)";
+  const values = [name, description];
+
+  connection.query(sql, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while creating data" });
+      return;
+    }
+    if ("insertId" in results) {
+      console.log("results: ", (results as ResultSetHeader).insertId);
+    }
+    res.status(200).send({ message: "Travel created successfully" });
+  });
 });
 
-app.delete("categories/:id", (req, res) => {
-  res.send("category deleted");
+app.delete("/categories/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  console.log("end point delete (id): ", id);
+
+  const sqlDelete = "DELETE FROM category WHERE id = ?";
+  const sqlSelect = "SELECT * FROM category WHERE id = ?";
+  const values = [id];
+
+  // Vérifier si l'id existe dans la base de données
+  connection.query(sqlSelect, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+    if (Array.isArray(results) && results.length === 0) {
+      res.status(404).send({ error: "Travel not found" });
+      return;
+    }
+  });
+
+  // Si l'id existe, on peut supprimer
+  connection.query(sqlDelete, values, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: "Error while fetching data" });
+      return;
+    }
+
+    console.log("results", results);
+
+    res.status(200).send({ message: "Success to delete" });
+  });
+});
+
+app.put("/categories/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  console.log("end point update (id): ", id);
+  console.log("end point update (body): ", req.body);
+
+  connection.query(
+    "SELECT * FROM category WHERE id = ?",
+    [id],
+    (error, results) => {
+      console.log("results: ", results);
+      console.log("error: ", error);
+      if (error) {
+        console.log("error: ", error);
+        res.status(500).send({ error: "Error while fetching data" });
+        return;
+      }
+      if (Array.isArray(results) && results.length === 0) {
+        res.status(404).send({ error: "Travel not found" });
+        return;
+      }
+
+      if (Array.isArray(results) && results.length === 1) {
+        const currentCategory = results[0];
+        const newCategory = {
+          ...currentCategory,
+          ...req.body,
+        };
+
+        console.log("newCategory: ", newCategory);
+
+        const sqlUpdate =
+          "UPDATE category SET name = ?, description = ? WHERE id = ?";
+        const values = [newCategory.name, newCategory.description, id];
+
+        connection.query(sqlUpdate, values, (error, results) => {
+          if (error) {
+            res.status(500).send({ error: "Error while updating data" });
+            return;
+          }
+
+          res.status(200).send({ message: "Travel updated successfully" });
+        });
+      }
+    }
+  );
+
+  // res.status(200).send({ message: "Travel updated successfully" });
 });
 
 //LISTEN
